@@ -12,6 +12,7 @@ namespace Arikaim\Core\Actions;
 use Arikaim\Core\Actions\ActionInterface;
 use Arikaim\Core\Utils\Factory;
 use Arikaim\Core\Utils\Path;
+use Arikaim\Core\Actions\ActionNotFound;
 
 /**
  * Factory class for actions
@@ -19,22 +20,63 @@ use Arikaim\Core\Utils\Path;
 class Actions 
 {
     /**
+     * Action
+     *
+     * @var ActionInterface
+     */
+    private $action;
+
+    /**
+     * Constructor
+    */
+    public function __construct(ActionInterface $action)
+    {
+        $this->action = $action;       
+    }
+
+    /**
+     * Run action
+     *
+     * @param mixed ...$params
+     * @return ActionInterface
+     */
+    public function run(...$params): ActionInterface
+    {
+        $this->action->run($params);
+
+        return $this->action;
+    }
+
+    /**
+     * Set action option
+     *
+     * @param string $name
+     * @param mixed $value
+     * @return ActionInterface
+     */
+    public function option(string $name, $value): Self
+    {
+        $this->action->option($name,$value);
+
+        return $this;
+    }
+
+    /**
      * Create action located in storage file
      *
      * @param string      $storagePath (relative)
      * @param string|null $className
-     * @return ActionInterface|null
+     * @return Self
      */
-    public static function createFromStorage(string $storagePath, ?string $className = null): ?ActionInterface
+    public static function createFromStorage(string $storagePath, ?string $className = null): Self
     {
-        $fileName = Path::STORAGE_PATH . $storagePath . (empty($className) == false) ? $className . '.php' : '';
-        if (\file_exists($fileName) == false) {
-            return null;
-        }
-        
-        $instance = require($fileName);
+        $fileName = (empty($className) == false) ? $className . '.php' : '';
+        $path = Path::STORAGE_PATH . $storagePath . $fileName;
 
-        return ($instance instanceof ActionInterface) ? $instance : Self::createActionInstance($className);                       
+        $instance = (\file_exists($path) == true) ? require($path) : null;
+        $instance = ($instance instanceof ActionInterface) ? $instance : Self::createActionInstance($className);   
+        
+        return new Self($instance);
     }
 
     /**
@@ -42,13 +84,13 @@ class Actions
      *
      * @param string $className
      * @param string $extensionName
-     * @return ActionInterface|null
+     * @return Self
      */
-    public function createFromExtension(string $className, string $extensionName): ?ActionInterface
+    public static function createFromExtension(string $className, string $extensionName): Self
     {
         $actionClass = Factory::getExtensionNamespace($extensionName) . '\\Actions\\' . $className;
 
-        return  Self::createActionInstance($actionClass);       
+        return new Self(Self::createActionInstance($actionClass));       
     }
 
     /**
@@ -56,29 +98,29 @@ class Actions
      *
      * @param string $className
      * @param string $moduleName
-     * @return ActionInterface|null
+     * @return Self
      */
-    public function createFromModule(string $className, string $moduleName): ?ActionInterface
+    public static function createFromModule(string $className, string $moduleName): Self
     {
         $actionClass = Factory::getModuleNamespace($moduleName) . '\\Actions\\' . $className;
 
-        return  Self::createActionInstance($actionClass);       
+        return new Self(Self::createActionInstance($actionClass));        
     }
 
     /**
      * Create action instance
      *
      * @param string $class
-     * @return ActionInterface|null
+     * @return ActionInterface
      */
-    public function createActionInstance(string $class): ?ActionInterface
+    public static function createActionInstance(string $class): ActionInterface
     {
         if (\class_exists($class) == false) {
-            return null;
+            return (new ActionNotFound())->option('name',$class);
         }
 
         $instance = new $class();
 
-        return ($instance instanceof ActionInterface) ? $instance : null; 
+        return ($instance instanceof ActionInterface) ? $instance : (new ActionNotFound())->option('name',$class); 
     }
 }

@@ -52,7 +52,14 @@ abstract class Action implements ActionInterface
     protected $options = [];
 
     /**
-     * Job code
+     * Result data
+     *
+     * @var array
+     */
+    protected $result = [];
+
+    /**
+     * Run action
      *
      * @param mixed $params
      * @return mixed
@@ -60,13 +67,40 @@ abstract class Action implements ActionInterface
     abstract public function run(...$params);
 
     /**
-     * Undocumented function
+     * Constructor
      */
     public function __construct()
     {
         $this->error = null;
+        $this->result = [];
         $this->init();
     }
+
+    /**
+     * Set result field
+     *
+     * @param string $name
+     * @param mixed $value
+     * @return ActionInterface
+     */
+    public function result(string $name, $value): ActionInterface
+    {
+        $this->result[$name] = $value;
+
+        return $this;
+    } 
+
+    /**
+     * Get result field
+     *
+     * @param string $name
+     * @param mixed $default
+     * @return mixed
+     */
+    public function get(string $name, $default = null)
+    {
+        return $this->result[$name] ?? $default;
+    } 
 
     /**
      * Run action
@@ -84,11 +118,13 @@ abstract class Action implements ActionInterface
      *
      * @param string $name
      * @param mixed $value
-     * @return void
+     * @return ActionInterface
      */
-    public function option(string $name, $value): void
+    public function option(string $name, $value): ActionInterface
     {
         $this->options[$name] = $value;
+
+        return $this;
     } 
 
     /**
@@ -136,6 +172,7 @@ abstract class Action implements ActionInterface
             'title'         => $this->getTitle(),
             'description'   => $this->getDescription(),
             'options'       => $this->getOptions(),
+            'result'        => $this->result
         ];
     }
 
@@ -153,11 +190,13 @@ abstract class Action implements ActionInterface
      * Set error
      *
      * @param mixed $error
-     * @return void
+     * @return ActionInterface
      */
-    public function error($error): void
+    public function error($error): ActionInterface
     {
         $this->error = $error;
+
+        return $this;
     }
 
     /**
