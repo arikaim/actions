@@ -42,7 +42,7 @@ class Actions
      */
     public function run(...$params): ActionInterface
     {
-        $this->action->run($params);
+        $this->action->run(...$params);
 
         return $this->action;
     }
