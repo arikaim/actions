@@ -53,4 +53,12 @@ interface ActionInterface
      * @return ActionInterface
      */
     public function option(string $name, $value): ActionInterface;
+
+    /**
+     * Set options
+     *
+     * @param array $options
+     * @return void
+     */
+    public function setOptions(array $options): void;
 }

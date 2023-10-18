@@ -28,6 +28,8 @@ class Actions
 
     /**
      * Constructor
+     * 
+     * @param ActionInterface $action
     */
     public function __construct(ActionInterface $action)
     {
@@ -52,11 +54,24 @@ class Actions
      *
      * @param string $name
      * @param mixed $value
-     * @return ActionInterface
+     * @return Self
      */
     public function option(string $name, $value): Self
     {
         $this->action->option($name,$value);
+
+        return $this;
+    }
+
+    /**
+     * Set action options
+     *
+     * @param array $options
+     * @return Self
+     */
+    public function options(array $options): Self
+    {
+        $this->action->setOptions($options);
 
         return $this;
     }
