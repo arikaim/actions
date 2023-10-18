@@ -156,6 +156,17 @@ abstract class Action implements ActionInterface
     } 
 
     /**
+     * Set options
+     *
+     * @param array $options
+     * @return void
+     */
+    public function setOptions(array $options): void
+    {
+        $this->options = $options;
+    } 
+
+    /**
      * Get result
      *
      * @return array
