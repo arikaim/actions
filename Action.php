@@ -10,12 +10,16 @@
 namespace Arikaim\Core\Actions;
 
 use Arikaim\Core\Actions\ActionInterface;
+use Arikaim\Core\Collection\Traits\Descriptor;
+use Arikaim\Core\Actions\ActionPropertiesDescriptor;
 
 /**
  * Base class for all actions
  */
 abstract class Action implements ActionInterface
 {
+    use Descriptor;
+
     /**
      * Action name
      *
@@ -73,6 +77,8 @@ abstract class Action implements ActionInterface
     {
         $this->error = null;
         $this->result = [];
+        $this->setDescriptorClass(ActionPropertiesDescriptor::class);
+
         $this->init();
     }
 
@@ -147,6 +153,16 @@ abstract class Action implements ActionInterface
     public function getOptions(): array
     {
         return $this->options;
+    } 
+
+    /**
+     * Get result
+     *
+     * @return array
+     */
+    public function getResult(): array
+    {
+        return $this->result;
     } 
 
     /**
