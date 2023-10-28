@@ -37,6 +37,16 @@ class Actions
     }
 
     /**
+     * Get action
+     *
+     * @return ActionInterface
+     */
+    public function getAction(): ActionInterface
+    {
+        return $this->action;
+    }
+
+    /**
      * Run action
      *
      * @param mixed ...$params
