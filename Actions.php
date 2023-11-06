@@ -148,4 +148,26 @@ class Actions
 
         return ($instance instanceof ActionInterface) ? $instance : (new ActionNotFound())->option('name',$class); 
     }
+
+    /**
+     * Create action
+     *
+     * @param string $class
+     * @param string $packageName
+     * @return Self
+     */
+    public static function create(string $class, string $packageName): Self
+    {
+        $actions = Self::createFromExtension($class,$packageName);
+        if (($actions->getAction() instanceof ActionNotFound) == false) {
+            return $actions;
+        }
+
+        $actions = Self::createFromModule($class,$packageName);
+        if (($actions->getAction() instanceof ActionNotFound) == false) {
+            return $actions;
+        }
+
+        return Self::createFromStorage($packageName,$class);
+    }
 }

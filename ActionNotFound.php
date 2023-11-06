@@ -17,6 +17,16 @@ use Arikaim\Core\Actions\Action;
 class ActionNotFound extends Action
 {
     /**
+     * Init action
+     *
+     * @return void
+     */
+    public function init(): void
+    {        
+        $this->error('Action ' . $this->getOption('name') . ' not found');
+    }
+
+    /**
      * Run action
      *
      * @param mixed $params
@@ -24,6 +34,5 @@ class ActionNotFound extends Action
      */
     public function run(...$params)
     {
-        $this->error('Action ' . $this->getOption('name') . ' not found');
     }
 }
