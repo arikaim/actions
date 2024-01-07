@@ -46,6 +46,13 @@ interface ActionInterface
     public function hasError(): bool;
 
     /**
+     * Get execution error
+     *
+     * @return mixed
+     */
+    public function getError();
+
+    /**
      * Set option
      *
      * @param string $name
