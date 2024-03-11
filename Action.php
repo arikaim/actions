@@ -53,7 +53,7 @@ abstract class Action implements ActionInterface
      *
      * @var array
      */
-    protected $options = [];
+    protected $options;
 
     /**
      * Result data
@@ -72,11 +72,14 @@ abstract class Action implements ActionInterface
 
     /**
      * Constructor
+     * 
+     * @param array $options
      */
-    public function __construct()
+    public function __construct(array $options = [])
     {
         $this->error = null;
         $this->result = [];
+        $this->options = $options;
         $this->setDescriptorClass(ActionPropertiesDescriptor::class);
 
         $this->init();

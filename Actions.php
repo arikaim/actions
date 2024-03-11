@@ -91,15 +91,16 @@ class Actions
      *
      * @param string      $storagePath (relative)
      * @param string|null $className
+     * @param array $options
      * @return Self
      */
-    public static function createFromStorage(string $storagePath, ?string $className = null): Self
+    public static function createFromStorage(string $storagePath, ?string $className = null, array $options = []): Self
     {
         $fileName = (empty($className) == false) ? $className . '.php' : '';
         $path = Path::STORAGE_PATH . $storagePath . $fileName;
 
         $instance = (\file_exists($path) == true) ? require($path) : null;
-        $instance = ($instance instanceof ActionInterface) ? $instance : Self::createActionInstance($className);   
+        $instance = ($instance instanceof ActionInterface) ? $instance : Self::createActionInstance($className,$options);   
         
         return new Self($instance);
     }
@@ -109,13 +110,14 @@ class Actions
      *
      * @param string $className
      * @param string $extensionName
+     * @param array $options
      * @return Self
      */
-    public static function createFromExtension(string $className, string $extensionName): Self
+    public static function createFromExtension(string $className, string $extensionName, array $options = []): Self
     {
         $actionClass = Factory::getExtensionNamespace($extensionName) . '\\Actions\\' . $className;
 
-        return new Self(Self::createActionInstance($actionClass));       
+        return new Self(Self::createActionInstance($actionClass,$options));       
     }
 
     /**
@@ -123,28 +125,30 @@ class Actions
      *
      * @param string $className
      * @param string $moduleName
+     * @param array $options
      * @return Self
      */
-    public static function createFromModule(string $className, string $moduleName): Self
+    public static function createFromModule(string $className, string $moduleName, array $options = []): Self
     {
         $actionClass = Factory::getModuleNamespace($moduleName) . '\\Actions\\' . $className;
 
-        return new Self(Self::createActionInstance($actionClass));        
+        return new Self(Self::createActionInstance($actionClass,$options));        
     }
 
     /**
      * Create action instance
      *
      * @param string $class
+     * @param array $options
      * @return ActionInterface
      */
-    public static function createActionInstance(string $class): ActionInterface
+    public static function createActionInstance(string $class, array $options = []): ActionInterface
     {
         if (\class_exists($class) == false) {
             return (new ActionNotFound())->option('name',$class);
         }
 
-        $instance = new $class();
+        $instance = new $class($options);
 
         return ($instance instanceof ActionInterface) ? $instance : (new ActionNotFound())->option('name',$class); 
     }
@@ -154,20 +158,21 @@ class Actions
      *
      * @param string $class
      * @param string $packageName
+     * @param array $options
      * @return Self
      */
-    public static function create(string $class, string $packageName): Self
+    public static function create(string $class, string $packageName, array $options = []): Self
     {
-        $actions = Self::createFromExtension($class,$packageName);
+        $actions = Self::createFromExtension($class,$packageName,$options);
         if (($actions->getAction() instanceof ActionNotFound) == false) {
             return $actions;
         }
 
-        $actions = Self::createFromModule($class,$packageName);
+        $actions = Self::createFromModule($class,$packageName,$options);
         if (($actions->getAction() instanceof ActionNotFound) == false) {
             return $actions;
         }
 
-        return Self::createFromStorage($packageName,$class);
+        return Self::createFromStorage($packageName,$class,$options);
     }
 }
