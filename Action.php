@@ -198,7 +198,7 @@ abstract class Action implements ActionInterface
         return [
             'name'          => $this->getName(),
             'error'         => $this->getError(),
-            'handler_class' => \get_class(),
+            'handler_class' => \get_class($this),
             'title'         => $this->getTitle(),
             'description'   => $this->getDescription(),
             'options'       => $this->getOptions(),
