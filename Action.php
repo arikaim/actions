@@ -268,7 +268,7 @@ abstract class Action implements ActionInterface
      */
     public function getName(): ?string
     {
-        return $this->name;
+        return (empty($this->name) == true) ? \get_class($this) : $this->name;
     }
 
     /**
