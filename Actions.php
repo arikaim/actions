@@ -157,12 +157,21 @@ class Actions
      * Create action
      *
      * @param string $class
-     * @param string $packageName
+     * @param mixed $packageName
      * @param array $options
      * @return Self
      */
-    public static function create(string $class, string $packageName, array $options = []): Self
+    public static function create(string $class, $packageName = null, array $options = []): Self
     {
+        if (\is_array($packageName) == true) {
+            $options = $packageName;
+        }
+        
+        $action = Self::createActionInstance($class,$options);
+        if (($action instanceof ActionNotFound) == false) {
+            new Self($action);
+        }
+
         $actions = Self::createFromExtension($class,$packageName,$options);
         if (($actions->getAction() instanceof ActionNotFound) == false) {
             return $actions;
