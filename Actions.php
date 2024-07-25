@@ -169,7 +169,7 @@ class Actions
         
         $action = Self::createActionInstance($class,$options);
         if (($action instanceof ActionNotFound) == false) {
-            new Self($action);
+            return new Self($action);
         }
 
         $actions = Self::createFromExtension($class,$packageName,$options);
