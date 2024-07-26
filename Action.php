@@ -145,7 +145,9 @@ abstract class Action implements ActionInterface
      */
     public function getOption(string $name, $default = null)
     {
-        return $this->options[$name] ?? $default;
+        $value = $this->options[$name] ?? $default;
+
+        return (empty($value) == true) ? $default : $value;
     } 
 
     /**
