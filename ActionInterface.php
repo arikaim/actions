@@ -68,4 +68,11 @@ interface ActionInterface
      * @return void
      */
     public function setOptions(array $options): void;
+
+    /**
+     * Get result
+     *
+     * @return array
+     */
+    public function getResult(): array;
 }
